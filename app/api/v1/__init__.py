@@ -1,6 +1,6 @@
 """API blueprint configuration."""
 
-from flask import Blueprint
+from flask import Blueprint, jsonify
 from flask_restx import Api
 
 
@@ -28,6 +28,25 @@ api = Api(
     doc="/ui",
     authorizations=authorizations,
 )
+
+
+@api_bp.route("/")
+def index():
+    return jsonify(
+        {
+            "message": "Welcome to the Pico-Library Flask API version 1 with JWT-Based Authentication",
+            "author": "piccolosan",
+            "endpoints": [
+                "/auth",
+                "/user",
+                "/comments",
+                "/books",
+                "/agents",
+                "/bookshelves",
+                "/resources",
+            ],
+        }
+    )
 
 
 api.add_namespace(auth_ns, path="/auth")

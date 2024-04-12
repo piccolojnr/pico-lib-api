@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, jsonify
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_migrate import Migrate
@@ -9,7 +9,6 @@ from http import HTTPStatus
 from flask_restx import abort
 from flask_mail import Mail
 
-cors = CORS()
 db = SQLAlchemy()
 migrate = Migrate()
 bcrypt = Bcrypt()
@@ -35,11 +34,16 @@ def create_app(config_name):
             if token:
                 abort(HTTPStatus.UNAUTHORIZED, "Unauthorized")
 
-    cors.init_app(app)
+    CORS(app)
+
     db.init_app(app)
     migrate.init_app(app)
     bcrypt.init_app(app)
     auth_manager.init_app(app)
     mail.init_app(app)
+
+    @app.route("/")
+    def index():
+        return jsonify({"message": "Welcome to Pico Library API"})
 
     return app
