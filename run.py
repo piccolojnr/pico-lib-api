@@ -3,7 +3,7 @@ from app.models import User, Book
 import os
 
 
-app = create_app(os.environ.get("FLASK_ENV"))
+app = create_app(os.environ.get("FLASK_ENV", "development"))
 app.app_context().push()
 
 

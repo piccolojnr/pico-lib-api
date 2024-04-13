@@ -1,9 +1,10 @@
 from http import HTTPStatus
+import os
 from flask import jsonify, current_app, url_for
 import jwt
 from app import db, mail, auth_manager
 from flask_restx import abort
-from app.models import User, Profile, UserGender
+from app.models import User, Profile, UserGender, BlacklistedToken
 from flask_pyjwt import current_token
 from flask_mail import Message
 
@@ -36,7 +37,6 @@ def process_registeration_reguest(email, password, first_name, last_name, gender
     response.status_code = HTTPStatus.CREATED
     response.headers["Cache-Control"] = "no-store"
     response.headers["Pragma"] = "no-cache"
-    # process_send_confirmation_email(new_user.email, new_user.public_id)
     return response
 
 
@@ -78,7 +78,7 @@ def process_logout_request():
     else:
         abort(HTTPStatus.UNAUTHORIZED, "User not found")
         return None
-        
+
 
 def process_refresh_token_request():
     public_id = current_token.sub
@@ -86,20 +86,32 @@ def process_refresh_token_request():
 
     if not user:
         abort(HTTPStatus.UNAUTHORIZED, "User not found")
-    auth_token = user.generate_auth_token().signed
 
-    return jsonify(message="token refreshed", auth_token=auth_token)
+    auth = user.encode_auth_token()
+    response = jsonify(
+        status="success",
+        message="token refreshed in successfully",
+        auth=auth,
+        token_type="Bearer",
+        expires_in=_get_token_expire_time(),
+    )
+    response.status_code = HTTPStatus.OK
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["Pragma"] = "no-cache"
+    return response
 
 
-def process_change_password(old_password, new_password, token=None):
+def process_change_password(old_password, new_password, token):
+    print(old_password, new_password, token)
     if token:
         payload = jwt.decode(
             token, current_app.config["SECRET_KEY"], algorithms="HS256"
         )
+        print(payload)
         email = payload["email"]
         user: User = User.find_by_email(email)
     else:
-        user: User = User.find_by_public_id(current_token.sub["public_id"])
+        abort(HTTPStatus.UNAUTHORIZED, "User not found")
 
     if not user:
         abort(HTTPStatus.UNAUTHORIZED, "User not found")
@@ -149,9 +161,8 @@ def _get_token_expire_time():
 def process_send_forgot_password_email(email, public_id):
     try:
         token = _generate_confirmation_token(email, public_id)
-        update_password_url = url_for(
-            "site.forgot_password", token=token, _external=True
-        )
+        base_url = current_app.config["PICO_LIB_APP"]
+        update_password_url = f"{base_url}forgot-password?token={token}&email={email}"
         msg = Message("Forgot Password", recipients=[email])
         msg.body = f"Hello!\n\nWe received a request to reset your password. If this was you, please click on the following link to reset your password:\n\n{update_password_url}\n\nIf you didn't request a password reset, you can safely ignore this email.\n\nBest regards,\nThe Pico-Library Team"
         msg.sender = current_app.config["MAIL_USERNAME"]
@@ -164,7 +175,8 @@ def process_send_forgot_password_email(email, public_id):
 def process_send_confirmation_email(email, public_id):
     try:
         token = _generate_confirmation_token(email, public_id)
-        confirm_email_url = url_for("site.confirm_email", token=token, _external=True)
+        base_url = current_app.config["PICO_LIB_APP"]
+        confirm_email_url = f"{base_url}confirm-email?token={token}&email={email}"
         msg = Message("Confirm Your Email Address", recipients=[email])
         msg.body = f"Hello!\n\nThank you for registering with us. Please click on the following link to confirm your email address:\n\n{confirm_email_url}\n\nIf you didn't sign up for an account, you can safely ignore this email.\n\nBest regards,\nThe Pico-Library Team"
         msg.sender = current_app.config["MAIL_USERNAME"]

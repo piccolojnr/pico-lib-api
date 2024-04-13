@@ -34,7 +34,16 @@ def create_app(config_name):
             if token:
                 abort(HTTPStatus.UNAUTHORIZED, "Unauthorized")
 
-    CORS(app)
+    CORS(
+        app,
+        resources={
+            r"/api/*": {
+                "origins": "*",
+                "methods": ["GET", "POST", "PUT", "DELETE"],
+                "allow_headers": ["Authorization", "Content-Type"],
+            }
+        },
+    )
 
     db.init_app(app)
     migrate.init_app(app)

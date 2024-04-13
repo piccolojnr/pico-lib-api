@@ -88,10 +88,9 @@ class LoginUser(Resource):
 
 @auth_ns.route("/refresh", endpoint="auth_refresh")
 class RefreshToken(Resource):
-    @require_token("refresh")
+    @require_token(token_type="refresh")
     @auth_ns.response(HTTPStatus.OK, "Token refreshed successfully")
     @auth_ns.response(HTTPStatus.BAD_REQUEST, "Bad request")
-    @auth_ns.response(HTTPStatus.CONFLICT, "User already exists")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR, "Internal server error")
     @auth_ns.response(HTTPStatus.UNAUTHORIZED, "Unauthorized")
     @auth_ns.response(HTTPStatus.NOT_FOUND, "Not found")
@@ -106,7 +105,6 @@ class LogoutUser(Resource):
     @require_token()
     @auth_ns.response(HTTPStatus.OK, "User logged out successfully")
     @auth_ns.response(HTTPStatus.BAD_REQUEST, "Bad request")
-    @auth_ns.response(HTTPStatus.CONFLICT, "User already exists")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR, "Internal server error")
     @auth_ns.response(HTTPStatus.UNAUTHORIZED, "Unauthorized")
     @auth_ns.response(HTTPStatus.NOT_FOUND, "Not found")
@@ -116,7 +114,7 @@ class LogoutUser(Resource):
         return process_logout_request()
 
 
-@auth_ns.route("/forgot_password", endpoint="auth_forgot_password")
+@auth_ns.route("/forgot-password", endpoint="auth_forgot_password")
 class ForgotPassword(Resource):
     @auth_ns.expect(auth_send_forgot_password_reqparser)
     @auth_ns.response(HTTPStatus.OK, "Email sent successfully")
@@ -135,7 +133,7 @@ class ForgotPassword(Resource):
         return process_send_forgot_password_email(email, user.public_id)
 
 
-@auth_ns.route("/change_password", endpoint="auth_change_password")
+@auth_ns.route("/change-password", endpoint="auth_change_password")
 class ChangePassword(Resource):
     @auth_ns.expect(auth_change_password_reqparser)
     @auth_ns.response(HTTPStatus.OK, "Password changed successfully")
@@ -168,7 +166,7 @@ class ProtectedRoute(Resource):
         return {"message": "You've reached the admin protected route!"}, 200
 
 
-@auth_ns.route("/confirm_email/<token>", endpoint="confirm_email")
+@auth_ns.route("/confirm-email/<token>", endpoint="confirm_email")
 class ConfirmEmail(Resource):
     @auth_ns.expect(auth_login_reqparser)
     def post(self, token):
@@ -178,9 +176,15 @@ class ConfirmEmail(Resource):
         return process_confirm_email(token, email, password)
 
 
-@auth_ns.route("/send_confirmation_email", endpoint="send_confirmation_email")
+@auth_ns.route("/confirm-email", endpoint="send_confirm_email")
 class SendConfirmationEmail(Resource):
     @require_token()
+    @auth_ns.response(HTTPStatus.OK, "Email sent successfully")
+    @auth_ns.response(HTTPStatus.BAD_REQUEST, "Bad request")
+    @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR, "Internal server error")
+    @auth_ns.response(HTTPStatus.UNAUTHORIZED, "Unauthorized")
+    @auth_ns.response(HTTPStatus.NOT_FOUND, "Not found")
+    @auth_ns.doc(security="Bearer")
     def post(self):
         from app.models import User
 

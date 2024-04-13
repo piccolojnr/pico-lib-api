@@ -63,13 +63,14 @@ class TestingConfig(Config):
     JWT_AUTHMAXAGE = 5
     JWT_REFRESHMAXAGE = 10
     SQLALCHEMY_DATABASE_URI = POSTSQL_TEST
+    PICO_LIB_APP = os.environ.get("PICO_LIB_APP", "http://localhost:3000/")
 
 
 class DevelopmentConfig(Config):
     """Development configuration."""
 
-    TOKEN_EXPIRE_MINUTES = 15
-    JWT_AUTHMAXAGE = 900
+    BCRYPT_LOG_ROUNDS = 13
+    JWT_AUTHMAXAGE = 60 * 5
     JWT_REFRESHMAXAGE = 3600
     # SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", POSTSQL_DEV)
     SQLALCHEMY_DATABASE_URI = POSTSQL_TEST
@@ -81,14 +82,15 @@ class DevelopmentConfig(Config):
     MAIL_USERNAME = os.getenv("MAIL_USERNAME")
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
 
+    PICO_LIB_APP = os.environ.get("PICO_LIB_APP", "http://localhost:3000/")
+
 
 class ProductionConfig(Config):
     """Production configuration."""
 
-    TOKEN_EXPIRE_HOURS = 1
     BCRYPT_LOG_ROUNDS = 13
-    JWT_AUTHMAXAGE = 3600
-    JWT_REFRESHMAXAGE = 604800
+    JWT_AUTHMAXAGE = 60 * 5
+    JWT_REFRESHMAXAGE = 60 * 60 * 24 * 50
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", POSTSQL_PROD)
     PRESERVE_CONTEXT_ON_EXCEPTION = True
     SECRET_KEY = os.getenv("SECRET_KEY")
@@ -98,6 +100,8 @@ class ProductionConfig(Config):
     MAIL_USE_SSL = True
     MAIL_USERNAME = os.getenv("MAIL_USERNAME")
     MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
+
+    PICO_LIB_APP = os.environ.get("PICO_LIB_APP", "http://localhost:3000/")
 
 
 ENV_CONFIG_DICT = dict(
