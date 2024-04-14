@@ -126,19 +126,38 @@ class ForgotPassword(Resource):
         email = request_data["email"]
         from app.models import User
 
-        user = User.query.filter_by(email=email).first()
+        user: User = User.query.filter_by(email=email).first()
         if user is None:
             return {"message": "User not found"}, HTTPStatus.NOT_FOUND
+
+        if not user.is_email_confirmed:
+            return {"message": "Email not confirmed"}, HTTPStatus.BAD_REQUEST
 
         return process_send_forgot_password_email(email, user.public_id)
 
 
-@auth_ns.route("/change-password", endpoint="auth_change_password")
+@auth_ns.route("/change-password/<token>", endpoint="auth_change_password_with_token")
 class ChangePassword(Resource):
     @auth_ns.expect(auth_change_password_reqparser)
     @auth_ns.response(HTTPStatus.OK, "Password changed successfully")
     @auth_ns.response(HTTPStatus.BAD_REQUEST, "Bad request")
-    @auth_ns.response(HTTPStatus.CONFLICT, "User already exists")
+    @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR, "Internal server error")
+    @auth_ns.response(HTTPStatus.NOT_FOUND, "Not found")
+    @auth_ns.doc(description="Change a user's password")
+    @auth_ns.doc(security="Bearer")
+    def put(self, token):
+        request_data = auth_change_password_reqparser.parse_args()
+        old_password = request_data["old_password"]
+        new_password = request_data["new_password"]
+        return process_change_password(old_password, new_password, token)
+
+
+@auth_ns.route("/change-password", endpoint="auth_change_password")
+class ChangePassword(Resource):
+    @require_token()
+    @auth_ns.expect(auth_change_password_reqparser)
+    @auth_ns.response(HTTPStatus.OK, "Password changed successfully")
+    @auth_ns.response(HTTPStatus.BAD_REQUEST, "Bad request")
     @auth_ns.response(HTTPStatus.INTERNAL_SERVER_ERROR, "Internal server error")
     @auth_ns.response(HTTPStatus.UNAUTHORIZED, "Unauthorized")
     @auth_ns.response(HTTPStatus.NOT_FOUND, "Not found")
@@ -148,8 +167,7 @@ class ChangePassword(Resource):
         request_data = auth_change_password_reqparser.parse_args()
         old_password = request_data["old_password"]
         new_password = request_data["new_password"]
-        token = request_data["token"]
-        return process_change_password(old_password, new_password, token)
+        return process_change_password(old_password, new_password, None)
 
 
 @auth_ns.route("/protected_route", endpoint="protected_route")

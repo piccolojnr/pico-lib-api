@@ -22,6 +22,17 @@ comment_model = Model(
     },
 )
 
+create_comment_model = Model(
+    "CreateComment",
+    {
+        "type": String,
+        "content": String,
+        "book_id": Integer,
+        "parent_id": Integer,
+        "rating": Float,
+    },
+)
+
 
 pagination_links_model = Model(
     "Nav Links",

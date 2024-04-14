@@ -203,7 +203,6 @@ def process_vote_comment(comment_id, vote_type):
     db.session.commit()
     return jsonify(
         status="success",
-        upvotes=comment.upvotes,
-        downvotes=comment.downvotes,
+        item=marshal(comment, comment_model),
         message=f"Comment with ID {comment_id} was successfully {vote_type}.",
     )

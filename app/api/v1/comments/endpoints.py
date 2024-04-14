@@ -12,6 +12,7 @@ from app.api.v1.comments.business import (
 from http import HTTPStatus
 from app.api.v1.comments.dto import (
     comment_model,
+    create_comment_model,
     retrieve_comments_reqparse,
     comment_pagination_model,
     pagination_links_model,
@@ -20,6 +21,7 @@ from app.api.v1.comments.dto import (
 
 comments_ns = Namespace(name="comments", validate=True)
 comments_ns.models[comment_model.name] = comment_model
+comments_ns.models[create_comment_model.name] = create_comment_model
 comments_ns.models[comment_pagination_model.name] = comment_pagination_model
 comments_ns.models[pagination_links_model.name] = pagination_links_model
 
@@ -28,7 +30,7 @@ comments_ns.models[pagination_links_model.name] = pagination_links_model
 class CommentsResource(Resource):
     @require_token()
     @comments_ns.doc(security="Bearer")
-    @comments_ns.expect(comment_model)
+    @comments_ns.expect(create_comment_model)
     @comments_ns.response(int(HTTPStatus.OK), "Token is currently valid.")
     @comments_ns.response(int(HTTPStatus.BAD_REQUEST), "Validation error.")
     @comments_ns.response(int(HTTPStatus.UNAUTHORIZED), "Token is invalid or expired.")
@@ -76,7 +78,7 @@ class CommentResource(Resource):
         return process_delete_comment(comment_id)
 
 
-@comments_ns.route("/vote/<int:comment_id>", endpoint="vote_comment")
+@comments_ns.route("/<int:comment_id>/vote", endpoint="vote_comment")
 class CommentVote(Resource):
     @require_token()
     @comments_ns.expect(vote_comment_req_parse)

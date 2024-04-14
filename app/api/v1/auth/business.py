@@ -111,12 +111,12 @@ def process_change_password(old_password, new_password, token):
         email = payload["email"]
         user: User = User.find_by_email(email)
     else:
-        abort(HTTPStatus.UNAUTHORIZED, "User not found")
+        user = User.find_by_public_id(current_token.sub["public_id"])
 
     if not user:
         abort(HTTPStatus.UNAUTHORIZED, "User not found")
 
-    if not token and not user.check_password(old_password):
+    if not user.check_password(old_password):
         abort(HTTPStatus.UNAUTHORIZED, "Invalid credentials")
 
     user.password = new_password
@@ -160,9 +160,10 @@ def _get_token_expire_time():
 
 def process_send_forgot_password_email(email, public_id):
     try:
+
         token = _generate_confirmation_token(email, public_id)
         base_url = current_app.config["PICO_LIB_APP"]
-        update_password_url = f"{base_url}forgot-password?token={token}&email={email}"
+        update_password_url = f"{base_url}change-password?token={token}&email={email}"
         msg = Message("Forgot Password", recipients=[email])
         msg.body = f"Hello!\n\nWe received a request to reset your password. If this was you, please click on the following link to reset your password:\n\n{update_password_url}\n\nIf you didn't request a password reset, you can safely ignore this email.\n\nBest regards,\nThe Pico-Library Team"
         msg.sender = current_app.config["MAIL_USERNAME"]
