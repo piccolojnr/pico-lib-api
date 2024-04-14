@@ -125,7 +125,15 @@ def process_update_book(book_id, data):
 
 
 def process_get_books(
-    page, per_page, lan=None, subject=None, agent=None, bookshelf=None, q=None
+    page,
+    per_page,
+    lan=None,
+    subject=None,
+    agent=None,
+    bookshelf=None,
+    q=None,
+    order=None,
+    sort=None,
 ):
     filter_conditions = []
     if lan and lan != "all":
@@ -143,9 +151,33 @@ def process_get_books(
     else:
         books = Book.query
 
-    books = books.order_by(Book.popularity_score.desc()).paginate(
-        page=page, per_page=per_page
-    )
+    if sort == "popularity":
+        if order == "desc":
+            books = books.order_by(Book.popularity_score.desc())
+        else:
+            books = books.order_by(Book.popularity_score.asc())
+    elif sort == "downloads":
+        if order == "desc":
+            books = books.order_by(Book.downloads.desc())
+        else:
+            books = books.order_by(Book.downloads.asc())
+    elif sort == "created_at":
+        if order == "desc":
+            books = books.order_by(Book.created_at.desc())
+        else:
+            books = books.order_by(Book.created_at.asc())
+    elif sort == "updated_at":
+        if order == "desc":
+            books = books.order_by(Book.updated_at.desc())
+        else:
+            books = books.order_by(Book.updated_at.asc())
+    elif sort == "title":
+        if order == "desc":
+            books = books.order_by(Book.title.desc())
+        else:
+            books = books.order_by(Book.title.asc())
+
+    books = books.paginate(page=page, per_page=per_page)
 
     pagination = dict(
         page=books.page,
@@ -170,7 +202,7 @@ def process_get_books(
 
 
 def process_get_book(book_id):
-    book = Book.query.filter_by(id=book_id).first()
+    book = Book.query.filter(Book.id == book_id).first()
 
     if book:
         book_data = marshal(book, book_model)

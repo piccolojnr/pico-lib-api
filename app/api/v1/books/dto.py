@@ -65,6 +65,20 @@ pagination_reqparse.add_argument(
     required=False,
     default=None,
 )
+pagination_reqparse.add_argument(
+    "order",
+    type=str,
+    required=False,
+    default=None,
+    choices=["asc", "desc"],
+)
+pagination_reqparse.add_argument(
+    "sort",
+    type=str,
+    required=False,
+    default=None,
+    choices=["title", "created_at", "updated_at", "downloads", "popularity"],
+)
 
 pagination_links_model = Model(
     "Nav Links",

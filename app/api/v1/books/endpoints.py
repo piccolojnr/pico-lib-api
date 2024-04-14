@@ -58,6 +58,8 @@ class BooksResource(Resource):
         agent = args.get("agent")
         bookshelf = args.get("bookshelf")
         q = args.get("q")
+        order = args.get("order")
+        sort = args.get("sort")
         return process_get_books(
             page=page,
             per_page=per_page,
@@ -66,6 +68,8 @@ class BooksResource(Resource):
             agent=agent,
             bookshelf=bookshelf,
             q=q,
+            order=order,
+            sort=sort,
         )
 
 
