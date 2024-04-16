@@ -2,8 +2,3 @@ venv/
 .env
 __pycache__/
 .pytest_cache/
-books_df.csv.gz
-seed.ipynb
-create_avatar.ipynb
-seed/
-tests/
