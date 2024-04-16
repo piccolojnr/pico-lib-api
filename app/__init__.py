@@ -42,9 +42,10 @@ def create_app(config_name):
 
     # Enable CORS for API routes
     allow_origins = app.config.get("CORS_ORIGINS", "*")
+    print(allow_origins)
 
     # Initialize Flask extensions with the application instance
-    cors.init_app(app, resources={r"/*": {"origins": allow_origins}})
+    cors.init_app(app, origins=allow_origins)
     db.init_app(app)
     migrate.init_app(app)
     bcrypt.init_app(app)

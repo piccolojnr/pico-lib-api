@@ -67,6 +67,9 @@ class Config:
     RESTX_MASK_SWAGGER = False
     JSON_SORT_KEYS = False
 
+    ah = os.environ.get("CORS_ORIGINS")
+    CORS_ORIGINS = ah.split(",") if ah else []
+
 
 class TestingConfig(Config):
     """Testing configuration."""
