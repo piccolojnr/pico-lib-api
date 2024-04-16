@@ -15,6 +15,7 @@ migrate = Migrate()
 bcrypt = Bcrypt()
 auth_manager = AuthManager()
 mail = Mail()
+cors = CORS()
 
 
 def create_app(config_name):
@@ -40,18 +41,10 @@ def create_app(config_name):
                 abort(HTTPStatus.UNAUTHORIZED, "Unauthorized")
 
     # Enable CORS for API routes
-    CORS(
-        app,
-        resources={
-            r"/api/*": {
-                "origins": "*",
-                "methods": ["GET", "POST", "PUT", "DELETE"],
-                "allow_headers": ["Authorization", "Content-Type"],
-            }
-        },
-    )
+    allow_origins = app.config.get("CORS_ORIGINS", "*")
 
     # Initialize Flask extensions with the application instance
+    cors.init_app(app, resources={r"/*": {"origins": allow_origins}})
     db.init_app(app)
     migrate.init_app(app)
     bcrypt.init_app(app)
