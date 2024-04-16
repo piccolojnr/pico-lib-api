@@ -7,10 +7,14 @@ from app.utils.pagination import _pagination_nav_header_links, _pagination_nav_l
 from app.api.v1.agents.dto import agent_pagination_model, agent_model
 
 
+# Process creation of an agent
 def process_create_agent(data):
+    # Convert agent type to uppercase and get the corresponding AgentType enum value
     data["type"] = AgentType[data["type"].upper()] if data["type"] else None
+    # Set default agent type to OTHER if not specified
     data["type"] = AgentType.OTHER if data["type"] == None else data["type"]
 
+    # Create agent object and add it to the database
     agent = Agent(**data)
     db.session.add(agent)
     db.session.commit()
@@ -26,6 +30,7 @@ def process_create_agent(data):
     return response, response_status_code, response_headers
 
 
+# Process retrieval of an agent
 def process_get_agent(agent_id):
     agent = Agent.query.filter(Agent.id == agent_id).first()
     if not agent:
@@ -33,6 +38,7 @@ def process_get_agent(agent_id):
     return marshal(agent, agent_model)
 
 
+# Process updating an agent
 def process_update_agent(agent_id, data):
     agent = Agent.query.filter(Agent.id == agent_id).first()
     if not agent:
@@ -51,6 +57,7 @@ def process_update_agent(agent_id, data):
     }
 
 
+# Process deletion of an agent
 def process_delete_agent(agent_id):
     agent = Agent.query.filter(Agent.id == agent_id).first()
     if not agent:
@@ -60,6 +67,7 @@ def process_delete_agent(agent_id):
     return {"status": "success", "message": "agent deleted successfully"}
 
 
+# Process retrieval of agents with pagination and filtering
 def process_get_agents(page=1, per_page=10, type=None, q=None):
 
     filter_conditions = []
@@ -96,6 +104,7 @@ def process_get_agents(page=1, per_page=10, type=None, q=None):
     return response
 
 
+# Process retrieval of popular agents with pagination
 def process_get_popular_agents(page=1, per_page=10):
     agents = Agent.query.filter(
         Agent.type == AgentType.AUTHOR, Agent.books.any(Book.downloads > 20)
@@ -123,6 +132,7 @@ def process_get_popular_agents(page=1, per_page=10):
     return response
 
 
+# Process adding a book to an agent
 def process_add_agent_book(agent_id, book_id):
     agent = Agent.query.filter(Agent.id == agent_id).first()
     if not agent:
@@ -140,6 +150,7 @@ def process_add_agent_book(agent_id, book_id):
     return {"status": "success", "message": "Book added successfully"}
 
 
+# Process removing a book from an agent
 def process_remove_agent_book(agent_id, book_id):
     agent = Agent.query.filter(Agent.id == agent_id).first()
     if not agent:

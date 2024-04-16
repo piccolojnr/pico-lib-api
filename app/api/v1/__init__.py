@@ -1,9 +1,10 @@
 """API blueprint configuration."""
 
+# Import necessary modules and classes
 from flask import Blueprint, jsonify
 from flask_restx import Api
 
-
+# Import endpoints from different namespaces
 from .auth.endpoints import auth_ns
 from .user.endpoints import user_ns
 from .comments.endpoints import comments_ns
@@ -17,9 +18,13 @@ from .publishers.endpoints import publisher_ns
 from .bookmarks.endpoints import bookmark_ns
 from .token.endpoints import token_ns
 
+# Define the API blueprint
 api_bp = Blueprint("api", __name__, url_prefix="/api/v1")
+
+# Define authorizations for Swagger UI
 authorizations = {"Bearer": {"type": "apiKey", "in": "header", "name": "Authorization"}}
 
+# Create an instance of Flask-RestX API
 api = Api(
     api_bp,
     version="1.0",
@@ -30,6 +35,7 @@ api = Api(
 )
 
 
+# Define the root route for the API
 @api_bp.route("/")
 def index():
     return jsonify(
@@ -49,6 +55,7 @@ def index():
     )
 
 
+# Add namespaces (API endpoints) to the API
 api.add_namespace(auth_ns, path="/auth")
 api.add_namespace(user_ns, path="/user")
 api.add_namespace(comments_ns, path="/comments")

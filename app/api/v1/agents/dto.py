@@ -3,7 +3,7 @@ from flask_restx.fields import String, Integer, Boolean, Nested, List
 from flask_restx.reqparse import RequestParser
 from flask_restx.inputs import positive
 
-
+# Request parser for pagination
 pagination_reqparse = RequestParser(bundle_errors=True)
 pagination_reqparse.add_argument(
     "page", type=positive, required=False, default=1, help="Page number"
@@ -46,6 +46,8 @@ pagination_reqparse.add_argument(
     required=False,
     help="Agent type",
 )
+
+# Model for short book representation
 book_model_short = Model(
     "BookShort",
     {
@@ -60,6 +62,8 @@ book_model_short = Model(
         "updated_at": String(attribute="updated_at_str"),
     },
 )
+
+# Model for representing an agent
 agent_model = Model(
     "Agent",
     {
@@ -74,6 +78,7 @@ agent_model = Model(
     },
 )
 
+# Shortened model for representing an agent
 short_agent_model = Model(
     "ShortAgent",
     {
@@ -87,7 +92,7 @@ short_agent_model = Model(
     },
 )
 
-
+# Request parser for creating an agent
 create_agent_reqparse = RequestParser(bundle_errors=True)
 create_agent_reqparse.add_argument(
     "name", type=str, required=True, help="Agent name is required"
@@ -138,11 +143,13 @@ create_agent_reqparse.add_argument(
     required=False,
 )
 
+# Model for pagination links
 pagination_links_model = Model(
     "Nav Links",
     {"self": String, "prev": String, "next": String, "first": String, "last": String},
 )
 
+# Model for paginated list of agents
 agent_pagination_model = Model(
     "AgentPagination",
     {

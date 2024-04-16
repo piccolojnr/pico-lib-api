@@ -9,6 +9,7 @@ from flask_pyjwt import current_token
 from flask_mail import Message
 
 
+# function to register new user
 def process_registeration_reguest(email, password, first_name, last_name, gender):
     if User.find_by_email(email):
         abort(HTTPStatus.BAD_REQUEST, "User already exists")
@@ -40,6 +41,7 @@ def process_registeration_reguest(email, password, first_name, last_name, gender
     return response
 
 
+# function to login user
 def process_login_request(email, password):
     if not email:
         abort(HTTPStatus.BAD_REQUEST, "Email is required")
@@ -65,6 +67,7 @@ def process_login_request(email, password):
         return None
 
 
+# function to logout user
 def process_logout_request():
     public_id = current_token.sub["public_id"]
     user: User = User.find_by_public_id(public_id)
@@ -80,6 +83,7 @@ def process_logout_request():
         return None
 
 
+# function to refresh token
 def process_refresh_token_request():
     public_id = current_token.sub
     user: User = User.find_by_public_id(public_id)
@@ -101,6 +105,7 @@ def process_refresh_token_request():
     return response
 
 
+# function to get user profile
 def process_change_password(old_password, new_password, token):
     print(old_password, new_password, token)
     if token:
@@ -124,6 +129,7 @@ def process_change_password(old_password, new_password, token):
     return jsonify(message="Password changed successfully")
 
 
+# function to confirm email
 def process_confirm_email(token, email, password):
     try:
         user: User = User.find_by_email(email)
@@ -151,6 +157,7 @@ def process_confirm_email(token, email, password):
         abort(HTTPStatus.INTERNAL_SERVER_ERROR, str(e))
 
 
+# function to generate confirmation token
 def _get_token_expire_time():
     token_age_h = current_app.config["TOKEN_EXPIRE_HOURS"]
     token_age_m = current_app.config["TOKEN_EXPIRE_MINUTES"]
@@ -158,6 +165,7 @@ def _get_token_expire_time():
     return expires_in_seconds
 
 
+# function to send forgot password email
 def process_send_forgot_password_email(email, public_id):
     try:
 
@@ -173,6 +181,7 @@ def process_send_forgot_password_email(email, public_id):
         abort(HTTPStatus.INTERNAL_SERVER_ERROR, "Failed to send email")
 
 
+# function to send confirmation email
 def process_send_confirmation_email(email, public_id):
     try:
         token = _generate_confirmation_token(email, public_id)
@@ -187,6 +196,7 @@ def process_send_confirmation_email(email, public_id):
         abort(HTTPStatus.INTERNAL_SERVER_ERROR, "Failed to send email")
 
 
+# function to generate confirmation token
 def _generate_confirmation_token(email, public_id):
     payload = {
         "email": email,

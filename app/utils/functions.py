@@ -12,6 +12,7 @@ from app.models import (
 from app.models.publishers import Publisher
 
 
+# Function to add a new resource type to the database if it doesn't exist
 def add_resource_type(resource_type):
     new_type = ResourceType.query.filter(ResourceType.name == resource_type).first()
     if not new_type:
@@ -20,6 +21,7 @@ def add_resource_type(resource_type):
     return new_type
 
 
+# Function to add new resources to the database
 def add_resources(resources):
     new_resources = []
     for resource in resources:
@@ -44,6 +46,7 @@ def add_resources(resources):
     return new_resources
 
 
+# Function to add new agents (e.g., authors) to the database
 def add_agents(agents):
     new_agents = []
     for agent in agents:
@@ -69,6 +72,7 @@ def add_agents(agents):
     return new_agents
 
 
+# Function to add new languages to the database
 def add_languages(languages):
     new_languages = []
     for language in languages:
@@ -80,6 +84,7 @@ def add_languages(languages):
     return new_languages
 
 
+# Function to add new bookshelves to the database
 def add_bookshelves(bookshelves):
     new_bookshelves = []
     for bookshelf in bookshelves:
@@ -91,6 +96,7 @@ def add_bookshelves(bookshelves):
     return new_bookshelves
 
 
+# Function to add new subjects to the database
 def add_subjects(subjects):
     new_subjects = []
     for subject in subjects:
@@ -102,6 +108,7 @@ def add_subjects(subjects):
     return new_subjects
 
 
+# Function to add new publishers to the database
 def add_publishers(publishers):
     new_publishers = []
     for publisher in publishers:

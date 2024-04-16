@@ -4,6 +4,8 @@ from flask_restx.model import Model
 from flask_restx.fields import String, Boolean
 
 
+# DTOs
+# data model for user
 user_model = Model(
     "User",
     {
@@ -15,6 +17,7 @@ user_model = Model(
 )
 
 
+# parsers
 auth_register_reqparser = RequestParser(bundle_errors=True)
 auth_register_reqparser.add_argument(
     "password",
@@ -54,6 +57,7 @@ auth_register_reqparser.add_argument(
 )
 
 
+# parsers
 auth_login_reqparser = RequestParser(bundle_errors=True)
 auth_login_reqparser.add_argument(
     "password",
@@ -70,6 +74,7 @@ auth_login_reqparser.add_argument(
     help="Email required",
 )
 
+# parsers
 auth_change_password_reqparser = RequestParser(bundle_errors=True)
 auth_change_password_reqparser.add_argument(
     "old_password",

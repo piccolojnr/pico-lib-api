@@ -1,15 +1,18 @@
-"""Helper functions for datetime, timezone and timedelta objects."""
+"""Helper functions for datetime, timezone, and timedelta objects."""
 
 import time
 from collections import namedtuple
 from datetime import datetime, timedelta, timezone
 
-
+# Date and time format strings
 DT_AWARE = "%m/%d/%y %I:%M:%S %p %Z"
 DT_NAIVE = "%m/%d/%y %I:%M:%S %p"
 DATE_MONTH_NAME = "%b %d %Y"
+
+# Number of seconds in a day
 ONE_DAY_IN_SECONDS = 86400
 
+# Named tuple for timespan
 timespan = namedtuple(
     "timespan",
     [
@@ -26,17 +29,15 @@ timespan = namedtuple(
 )
 
 
+# Function to get current UTC time with microsecond value normalized to zero
 def utc_now():
-    """Current UTC date and time with the
-    microsecond value normalized to zero.
-    """
+    """Current UTC date and time with the microsecond value normalized to zero."""
     return datetime.now(timezone.utc).replace(microsecond=0)
 
 
+# Function to convert datetime value to a string localized for a specified timezone
 def localized_dt_string(dt, use_tz=None):
-    """Convert datetime value to a string,
-    localized for the specified timezone.
-    """
+    """Convert datetime value to a string, localized for the specified timezone."""
     if not dt.tzinfo and not use_tz:
         return dt.strftime(DT_NAIVE)
     if not dt.tzinfo:
@@ -44,12 +45,14 @@ def localized_dt_string(dt, use_tz=None):
     return dt.astimezone(use_tz).strftime(DT_AWARE) if use_tz else dt.strftime(DT_AWARE)
 
 
+# Function to get UTC offset from the local system and return as a timezone object
 def get_local_utcoffset():
-    """Get UTC offset from local system and return as timezone object."""
+    """Get UTC offset from the local system and return as a timezone object."""
     utc_offset = timedelta(seconds=time.localtime().tm_gmtoff)
     return timezone(offset=utc_offset)
 
 
+# Function to make a naive datetime object timezone-aware
 def make_tzaware(dt, use_tz=None, localize=True):
     """Make a naive datetime object timezone-aware."""
     if not use_tz:
@@ -57,6 +60,7 @@ def make_tzaware(dt, use_tz=None, localize=True):
     return dt.astimezone(use_tz) if localize else dt.replace(tzinfo=use_tz)
 
 
+# Function to create a timezone-aware datetime object from a UNIX timestamp
 def dtaware_fromtimestamp(timestamp, use_tz=None):
     """Time-zone aware datetime object from UNIX timestamp."""
     timestamp_naive = datetime.fromtimestamp(timestamp)
@@ -64,6 +68,7 @@ def dtaware_fromtimestamp(timestamp, use_tz=None):
     return timestamp_aware.astimezone(use_tz) if use_tz else timestamp_aware
 
 
+# Function to calculate time remaining from now until a UNIX timestamp value
 def remaining_fromtimestamp(timestamp):
     """Calculate time remaining from now until UNIX timestamp value."""
     now = datetime.now(timezone.utc)
@@ -73,10 +78,9 @@ def remaining_fromtimestamp(timestamp):
     return get_timespan(dt_aware - now)
 
 
+# Function to format a timespan namedtuple as a string resembling a digital display
 def format_timespan_digits(ts):
-    """Format a timespan namedtuple as
-    a string resembling a digital display.
-    """
+    """Format a timespan namedtuple as a string resembling a digital display."""
     if ts.days:
         day_or_days = "days" if ts.days > 1 else "day"
         return (
@@ -88,11 +92,13 @@ def format_timespan_digits(ts):
     return f"00:00:00.{ts.total_microseconds}"
 
 
+# Function to format a timedelta object as a string resembling a digital display
 def format_timedelta_digits(td):
     """Format a timedelta object as a string resembling a digital display."""
     return format_timespan_digits(get_timespan(td))
 
 
+# Function to format a timespan namedtuple as a readable string
 def format_timespan_str(ts):
     """Format a timespan namedtuple as a readable string."""
     if ts.days:
@@ -112,11 +118,13 @@ def format_timespan_str(ts):
     return f"{ts.total_microseconds} mircoseconds"
 
 
+# Function to format a timedelta object as a readable string
 def format_timedelta_str(td):
     """Format a timedelta object as a readable string."""
     return format_timespan_str(get_timespan(td))
 
 
+# Function to convert timedelta object to timespan namedtuple
 def get_timespan(td):
     """Convert timedelta object to timespan namedtuple."""
     (milliseconds, microseconds) = divmod(td.microseconds, 1000)

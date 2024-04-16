@@ -9,6 +9,7 @@ from http import HTTPStatus
 from flask_restx import abort
 from flask_mail import Mail
 
+# Initialize Flask extensions
 db = SQLAlchemy()
 migrate = Migrate()
 bcrypt = Bcrypt()
@@ -17,23 +18,28 @@ mail = Mail()
 
 
 def create_app(config_name):
+    # Create Flask application instance
     app = Flask("pico-library-api")
-    app.debug = False
-    app.config.from_object(get_config(config_name))
+    app.debug = False  # Set debug mode to False
+    app.config.from_object(get_config(config_name))  # Load configuration settings
 
+    # Import API blueprint and register it with the application
     from app.api.v1 import api_bp
 
     app.register_blueprint(api_bp)
 
+    # Function to run before each request to check for blacklisted tokens
     @app.before_request
     def check_blacklist():
         if current_token:
             from app.models import BlacklistedToken
 
+            # Check if the token is blacklisted
             token = BlacklistedToken.check_blacklist(current_token.signed)
             if token:
                 abort(HTTPStatus.UNAUTHORIZED, "Unauthorized")
 
+    # Enable CORS for API routes
     CORS(
         app,
         resources={
@@ -45,14 +51,16 @@ def create_app(config_name):
         },
     )
 
+    # Initialize Flask extensions with the application instance
     db.init_app(app)
     migrate.init_app(app)
     bcrypt.init_app(app)
     auth_manager.init_app(app)
     mail.init_app(app)
 
+    # Define a route for the root endpoint
     @app.route("/")
     def index():
         return jsonify({"message": "Welcome to Pico Library API"})
 
-    return app
+    return app  # Return the Flask application instance

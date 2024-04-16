@@ -1,76 +1,329 @@
-# Book Recommendation Platform
+# PICO-LIBRARY API DOCUMENTATION
 
-**Tagline:** Discover your next favorite read with personalized recommendations.
+## Overview
 
-## Team
+This API provides endpoints for managing subjects, books, comments, bookshelves, resources, languages, publishers, bookmarks, and user profiles. It utilizes JWT-based authentication for secure access.
 
-### Team Members:
-- [Your Name]
+## Authentication
 
-### Roles:
-- [Your Name]: Full-stack Developer, Project Manager
+To authenticate and obtain a JWT token, use the following endpoint:
 
-### Reasoning:
-- As the sole team member, you will handle both frontend and backend development and oversee the project's management.
+- **Endpoint:** `/api/v1/auth/login`
+- **Method:** POST
+- **Description:** Authenticate user credentials and generate a JWT token.
+- **Parameters:**
+  - `email` (required): User's email address
+  - `password` (required): User's password
+- **Response:**
+  - `token`: JWT token for accessing protected endpoints
 
-## Technologies
+---
 
-### Required Technologies:
-- **Programming Languages:** Python, JavaScript
-- **Frameworks:** Django (Backend), React (Frontend)
-- **Database:** PostgreSQL
-- **Version Control:** Git
-- **Deployment:** Heroku or AWS
+### Logout
+- **Endpoint:** `/api/v1/auth/logout`
+- **Method:** POST
+- **Description:** Invalidate JWT token.
 
-## Project Overview
+### Refresh Token
+- **Endpoint:** `/api/v1/auth/refresh`
+- **Method:** POST
+- **Description:** Refresh JWT token.
 
-### Problem Statement:
-The Book Recommendation Platform aims to address the challenge of helping users discover books tailored to their preferences.
+### Register
+- **Endpoint:** `/api/v1/auth/register`
+- **Method:** POST
+- **Description:** Register a new user.
+- **Request Body:**
+  - `email`: User email
+  - `password`: User password
 
-### Platform Features:
+### Change Password
+- **Endpoint:** `/api/v1/auth/change_password`
+- **Method:** PUT
+- **Description:** Change user password.
+- **Request Body:**
+  - `old_password`: User's current password
+  - `new_password`: User's new password
 
-1. **User Profiles:**
-   - Users can create profiles, indicating their favorite genres, authors, and past reads.
+---
 
-2. **Book Database:**
-   - A comprehensive database of books, including details like genre, author, ratings, and reviews.
+# API Endpoints
 
-3. **Recommendation Engine:**
-   - Implement a recommendation engine based on user preferences, leveraging collaborative filtering or content-based methods.
+## Books
 
-4. **Search and Filters:**
-   - Allow users to search for specific books, apply filters, and explore curated lists.
+### Get All Books
+- **Endpoint:** `/api/v1/books/`
+- **Method:** GET
+- **Description:** Retrieve all books.
 
-5. **User Reviews and Ratings:**
-   - Enable users to leave reviews, rate books, and see aggregate ratings.
+### Get Book by ID
+- **Endpoint:** `/api/v1/books/<book_id>`
+- **Method:** GET
+- **Description:** Retrieve a specific book by its ID.
 
-6. **Personalized Reading Lists:**
-   - Provide users with personalized reading lists based on their preferences and reading history.
+### Create Book
+- **Endpoint:** `/api/v1/books/`
+- **Method:** POST
+- **Description:** Create a new book.
+- **Request Body:** JSON object containing book details.
 
-7. **Integration with External APIs:**
-   - Integrate with external APIs (e.g., Goodreads) for additional book information and reviews.
+### Update Book
+- **Endpoint:** `/api/v1/books/<book_id>`
+- **Method:** PUT
+- **Description:** Update an existing book by its ID.
+- **Request Body:** JSON object containing updated book details.
 
-8. **Mobile Responsiveness:**
-   - Ensure the platform is accessible on mobile devices for users on the go.
+### Delete Book
+- **Endpoint:** `/api/v1/books/<book_id>`
+- **Method:** DELETE
+- **Description:** Delete a book by its ID.
 
-## Challenges
+---
 
-### User Engagement:
-- **Challenge:** Maintaining consistent user engagement can be challenging.
-- **Strategy:** Regularly update book recommendations, implement gamification elements, and encourage community interactions through discussions and forums.
+## Book Recommendations
 
-### Data Accuracy:
-- **Challenge:** Ensuring the accuracy of book data and recommendations.
-- **Strategy:** Regularly update the book database, verify data from external APIs, and implement user feedback mechanisms to correct inaccuracies.
+### Get Book Recommendations
+- **Endpoint:** `/api/v1/books/recommendations`
+- **Method:** GET
+- **Description:** Retrieve recommended books based on user preferences or system algorithms.
 
-### Personalization Accuracy:
-- **Challenge:** Achieving accurate personalization in recommendations.
-- **Strategy:** Continuously refine and train the recommendation engine based on user interactions and feedback.
+---
 
-### Integration with External APIs:
-- **Challenge:** Managing changes in external APIs that the platform relies on.
-- **Strategy:** Regularly monitor API updates, implement versioning, and have fallback mechanisms in case of API disruptions.
+## Subjects
 
-### Mobile User Experience:
-- **Challenge:** Ensuring a seamless user experience on mobile devices.
-- **Strategy:** Prioritize responsive design, conduct thorough testing on various devices, and optimize for mobile performance.
+### Get Subjects
+
+- **Endpoint:** `/api/v1/subjects/`
+- **Method:** GET
+- **Description:** Retrieve a list of subjects.
+
+### Create Subject
+
+- **Endpoint:** `/api/v1/subjects/`
+- **Method:** POST
+- **Description:** Create a new subject.
+- **Request Body:** JSON object containing subject details.
+
+### Get Subject
+
+- **Endpoint:** `/api/v1/subjects/{subject_id}`
+- **Method:** GET
+- **Description:** Retrieve details of a specific subject.
+
+### Delete Subject
+
+- **Endpoint:** `/api/v1/subjects/{subject_id}`
+- **Method:** DELETE
+- **Description:** Delete a specific subject.
+
+### Update Subject
+
+- **Endpoint:** `/api/v1/subjects/{subject_id}`
+- **Method:** PUT
+- **Description:** Update details of a specific subject.
+
+---
+
+## Comments
+
+### Get All Comments
+- **Endpoint:** `/api/v1/comments/`
+- **Method:** GET
+- **Description:** Retrieve all comments.
+
+### Get Comment by ID
+- **Endpoint:** `/api/v1/comments/<comment_id>`
+- **Method:** GET
+- **Description:** Retrieve a specific comment by its ID.
+
+### Create Comment
+- **Endpoint:** `/api/v1/comments/`
+- **Method:** POST
+- **Description:** Create a new comment.
+- **Request Body:** JSON object containing comment details.
+
+### Update Comment
+- **Endpoint:** `/api/v1/comments/<comment_id>`
+- **Method:** PUT
+- **Description:** Update an existing comment by its ID.
+- **Request Body:** JSON object containing updated comment details.
+
+### Delete Comment
+- **Endpoint:** `/api/v1/comments/<comment_id>`
+- **Method:** DELETE
+- **Description:** Delete a comment by its ID.
+
+---
+
+## Bookshelves
+
+### Get All Bookshelves
+- **Endpoint:** `/api/v1/bookshelves/`
+- **Method:** GET
+- **Description:** Retrieve all bookshelves.
+
+### Get Bookshelf by ID
+- **Endpoint:** `/api/v1/bookshelves/<bookshelf_id>`
+- **Method:** GET
+- **Description:** Retrieve a specific bookshelf by its ID.
+
+### Create Bookshelf
+- **Endpoint:** `/api/v1/bookshelves/`
+- **Method:** POST
+- **Description:** Create a new bookshelf.
+- **Request Body:** JSON object containing bookshelf details.
+
+### Update Bookshelf
+- **Endpoint:** `/api/v1/bookshelves/<bookshelf_id>`
+- **Method:** PUT
+- **Description:** Update an existing bookshelf by its ID.
+- **Request Body:** JSON object containing updated bookshelf details.
+
+### Delete Bookshelf
+- **Endpoint:** `/api/v1/bookshelves/<bookshelf_id>`
+- **Method:** DELETE
+- **Description:** Delete a bookshelf by its ID.
+
+---
+
+## Resources
+
+### Get All Resources
+- **Endpoint:** `/api/v1/resources/`
+- **Method:** GET
+- **Description:** Retrieve all resources.
+
+### Get Resource by ID
+- **Endpoint:** `/api/v1/resources/resource/<resource_id>`
+- **Method:** GET
+- **Description:** Retrieve a specific resource by its ID.
+
+### Create Resource
+- **Endpoint:** `/api/v1/resources/`
+- **Method:** POST
+- **Description:** Create a new resource.
+- **Request Body:** JSON object containing resource details.
+
+### Update Resource
+- **Endpoint:** `/api/v1/resources/resource/<resource_id>`
+- **Method:** PUT
+- **Description:** Update an existing resource by its ID.
+- **Request Body:** JSON object containing updated resource details.
+
+### Delete Resource
+- **Endpoint:** `/api/v1/resources/resource/<resource_id>`
+- **Method:** DELETE
+- **Description:** Delete a resource by its ID.
+
+---
+
+## Languages
+
+### Get All Languages
+- **Endpoint:** `/api/v1/languages/`
+- **Method:** GET
+- **Description:** Retrieve all languages.
+
+### Get Language by ID
+- **Endpoint:** `/api/v1/languages/<language_id>`
+- **Method:** GET
+- **Description:** Retrieve a specific language by its ID.
+
+### Create Language
+- **Endpoint:** `/api/v1/languages/`
+- **Method:** POST
+- **Description:** Create a new language.
+- **Request Body:** JSON object containing language details.
+
+### Update Language
+- **Endpoint:** `/api/v1/languages/<language_id>`
+- **Method:** PUT
+- **Description:** Update an existing language by its
+
+ ID.
+- **Request Body:** JSON object containing updated language details.
+
+### Delete Language
+- **Endpoint:** `/api/v1/languages/<language_id>`
+- **Method:** DELETE
+- **Description:** Delete a language by its ID.
+
+---
+
+## Publishers
+
+### Get All Publishers
+- **Endpoint:** `/api/v1/publishers/`
+- **Method:** GET
+- **Description:** Retrieve all publishers.
+
+### Get Publisher by ID
+- **Endpoint:** `/api/v1/publishers/<publisher_id>`
+- **Method:** GET
+- **Description:** Retrieve a specific publisher by its ID.
+
+### Create Publisher
+- **Endpoint:** `/api/v1/publishers/`
+- **Method:** POST
+- **Description:** Create a new publisher.
+- **Request Body:** JSON object containing publisher details.
+
+### Update Publisher
+- **Endpoint:** `/api/v1/publishers/<publisher_id>`
+- **Method:** PUT
+- **Description:** Update an existing publisher by its ID.
+- **Request Body:** JSON object containing updated publisher details.
+
+### Delete Publisher
+- **Endpoint:** `/api/v1/publishers/<publisher_id>`
+- **Method:** DELETE
+- **Description:** Delete a publisher by its ID.
+
+---
+
+## Bookmarks
+
+### Get All Bookmarks
+- **Endpoint:** `/api/v1/bookmarks/`
+- **Method:** GET
+- **Description:** Retrieve all bookmarks.
+
+### Get Bookmark by ID
+- **Endpoint:** `/api/v1/bookmarks/<bookmark_id>`
+- **Method:** GET
+- **Description:** Retrieve a specific bookmark by its ID.
+
+### Create Bookmark
+- **Endpoint:** `/api/v1/bookmarks/`
+- **Method:** POST
+- **Description:** Create a new bookmark.
+- **Request Body:** JSON object containing bookmark details.
+
+### Update Bookmark
+- **Endpoint:** `/api/v1/bookmarks/<bookmark_id>`
+- **Method:** PUT
+- **Description:** Update an existing bookmark by its ID.
+- **Request Body:** JSON object containing updated bookmark details.
+
+### Delete Bookmark
+- **Endpoint:** `/api/v1/bookmarks/<bookmark_id>`
+- **Method:** DELETE
+- **Description:** Delete a bookmark by its ID.
+
+---
+
+## User Profiles
+
+### Get User Profile
+- **Endpoint:** `/api/v1/user/profile`
+- **Method:** GET
+- **Description:** Retrieve the profile of the authenticated user.
+
+### Update User Profile
+- **Endpoint:** `/api/v1/user/profile`
+- **Method:** PUT
+- **Description:** Update the profile of the authenticated user.
+- **Request Body:** JSON object containing updated user profile details.
+
+---
+

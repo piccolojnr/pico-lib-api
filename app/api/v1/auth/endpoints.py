@@ -19,11 +19,14 @@ from app.api.v1.auth.dto import (
     user_model,
 )
 
+# Create a namespace for authentication
 auth_ns = Namespace(name="auth", validate=True)
 
 
+# Define endpoints for authentication
 @auth_ns.route("/", endpoint="auth_user")
 class AuthUser(Resource):
+    # Endpoint for logging in a user
     @require_token()
     @auth_ns.response(HTTPStatus.OK, "User logged in successfully")
     @auth_ns.response(HTTPStatus.BAD_REQUEST, "Bad request")
@@ -45,8 +48,10 @@ class AuthUser(Resource):
         return user
 
 
+# Define endpoints for authentication
 @auth_ns.route("/register", endpoint="auth_register")
 class RegisterUser(Resource):
+    # Endpoint for registering a new user
     @auth_ns.expect(auth_register_reqparser)
     @auth_ns.response(HTTPStatus.CREATED, "User created successfully")
     @auth_ns.response(HTTPStatus.BAD_REQUEST, "Bad request")
@@ -68,8 +73,10 @@ class RegisterUser(Resource):
         )
 
 
+# Define endpoints for authentication
 @auth_ns.route("/login", endpoint="auth_login")
 class LoginUser(Resource):
+    # Endpoint for logging in a user
     @auth_ns.expect(auth_login_reqparser)
     @auth_ns.response(HTTPStatus.OK, "User logged in successfully")
     @auth_ns.response(HTTPStatus.BAD_REQUEST, "Bad request")
@@ -86,8 +93,10 @@ class LoginUser(Resource):
         return process_login_request(email, password)
 
 
+# Define endpoints for authentication
 @auth_ns.route("/refresh", endpoint="auth_refresh")
 class RefreshToken(Resource):
+    # Endpoint for refreshing a token
     @require_token(token_type="refresh")
     @auth_ns.response(HTTPStatus.OK, "Token refreshed successfully")
     @auth_ns.response(HTTPStatus.BAD_REQUEST, "Bad request")
@@ -100,6 +109,7 @@ class RefreshToken(Resource):
         return process_refresh_token_request()
 
 
+# Define endpoints for authentication
 @auth_ns.route("/logout", endpoint="auth_logout")
 class LogoutUser(Resource):
     @require_token()
@@ -114,8 +124,10 @@ class LogoutUser(Resource):
         return process_logout_request()
 
 
+# Define endpoints for authentication
 @auth_ns.route("/forgot-password", endpoint="auth_forgot_password")
 class ForgotPassword(Resource):
+    # Endpoint for sending a forgot password email
     @auth_ns.expect(auth_send_forgot_password_reqparser)
     @auth_ns.response(HTTPStatus.OK, "Email sent successfully")
     @auth_ns.response(HTTPStatus.BAD_REQUEST, "Bad request")
@@ -136,8 +148,10 @@ class ForgotPassword(Resource):
         return process_send_forgot_password_email(email, user.public_id)
 
 
+# Define endpoints for authentication
 @auth_ns.route("/change-password/<token>", endpoint="auth_change_password_with_token")
 class ChangePassword(Resource):
+    # Endpoint for changing a user's password
     @auth_ns.expect(auth_change_password_reqparser)
     @auth_ns.response(HTTPStatus.OK, "Password changed successfully")
     @auth_ns.response(HTTPStatus.BAD_REQUEST, "Bad request")
@@ -152,8 +166,10 @@ class ChangePassword(Resource):
         return process_change_password(old_password, new_password, token)
 
 
+# Define endpoints for authentication
 @auth_ns.route("/change-password", endpoint="auth_change_password")
 class ChangePassword(Resource):
+    # Endpoint for changing a user's password
     @require_token()
     @auth_ns.expect(auth_change_password_reqparser)
     @auth_ns.response(HTTPStatus.OK, "Password changed successfully")
@@ -170,22 +186,28 @@ class ChangePassword(Resource):
         return process_change_password(old_password, new_password, None)
 
 
+# Define endpoints for authentication
 @auth_ns.route("/protected_route", endpoint="protected_route")
 class ProtectedRoute(Resource):
+    # Endpoint for a protected route
     @require_token()
     def get(self):
         return {"message": "You've reached the protected route!"}, 200
 
 
+# Define endpoints for authentication
 @auth_ns.route("/admin_protected_route", endpoint="admin_protected_route")
 class ProtectedRoute(Resource):
+    # Endpoint for a protected route
     @require_token(scope={"is_admin": True})
     def get(self):
         return {"message": "You've reached the admin protected route!"}, 200
 
 
+# Define endpoints for authentication
 @auth_ns.route("/confirm-email/<token>", endpoint="confirm_email")
 class ConfirmEmail(Resource):
+    # Endpoint for confirming an email
     @auth_ns.expect(auth_login_reqparser)
     def post(self, token):
         request_data = auth_login_reqparser.parse_args()
@@ -194,8 +216,10 @@ class ConfirmEmail(Resource):
         return process_confirm_email(token, email, password)
 
 
+# Define endpoints for authentication
 @auth_ns.route("/confirm-email", endpoint="send_confirm_email")
 class SendConfirmationEmail(Resource):
+    # Endpoint for sending a confirmation email
     @require_token()
     @auth_ns.response(HTTPStatus.OK, "Email sent successfully")
     @auth_ns.response(HTTPStatus.BAD_REQUEST, "Bad request")
